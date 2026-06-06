@@ -8,6 +8,8 @@
 
 Color control. Watertight precision. 100% in your browser.
 
+[**GitHub →** github.com/DrNerf/vectorizer](https://github.com/DrNerf/vectorizer)
+
 </div>
 
 ---

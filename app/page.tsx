@@ -14,9 +14,12 @@ import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 import DownloadIcon from "@mui/icons-material/Download";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import Logo from "@/components/Logo";
 import UploadButton from "@/components/UploadButton";
 import ControlsPanel from "@/components/ControlsPanel";
@@ -155,6 +158,18 @@ export default function Home() {
               Per-layer ZIP{result ? ` (${result.layers.length})` : ""}
             </MenuItem>
           </Menu>
+          <Tooltip title="View source on GitHub">
+            <IconButton
+              component="a"
+              href="https://github.com/DrNerf/vectorizer"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              color="inherit"
+            >
+              <GitHubIcon />
+            </IconButton>
+          </Tooltip>
         </Toolbar>
       </AppBar>
 
