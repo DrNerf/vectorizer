@@ -1,0 +1,39 @@
+{
+  "name": "vectorizer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "verify:m2": "node scripts/verify-m2.mjs",
+    "verify:m3": "node scripts/verify-m3.mjs",
+    "verify:m4": "node scripts/verify-m4.mjs",
+    "verify:m5": "node scripts/verify-m5.mjs",
+    "verify:m6": "node scripts/verify-m6.mjs"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.0.1",
+    "@mui/material": "^9.0.1",
+    "@mui/material-nextjs": "^9.0.1",
+    "@techstark/opencv-js": "^4.12.0-release.1",
+    "jszip": "^3.10.1",
+    "ml-kmeans": "^7.0.0",
+    "next": "16.2.7",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.7",
+    "playwright": "^1.60.0",
+    "typescript": "^5"
+  }
+}

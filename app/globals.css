@@ -1,0 +1,7 @@
+/* MUI CssBaseline owns resets, colors, and typography.
+   Only keep what the app shell needs: full-height root for the 100vh layout. */
+html,
+body,
+:root {
+  height: 100%;
+}
