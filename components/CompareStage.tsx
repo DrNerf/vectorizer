@@ -270,10 +270,14 @@ export default function CompareStage({
         }}
       >
         {empty && (
-          <Stack spacing={1} sx={{ height: "100%", alignItems: "center", justifyContent: "center", color: "text.secondary" }}>
+          <Stack spacing={1} sx={{ height: "100%", alignItems: "center", justifyContent: "center", color: "text.secondary", px: 3, textAlign: "center" }}>
             <ImageIcon sx={{ fontSize: 48, opacity: 0.5 }} />
             <Typography variant="body1">No image yet</Typography>
             <Typography variant="body2" sx={{ opacity: 0.7 }}>Drag &amp; drop, or use Upload — PNG or JPG.</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.7, maxWidth: 420, mt: 1 }}>
+              Everything runs offline, right here in your browser. Your image is never
+              uploaded, sent to a server, or stored anywhere — it never leaves your device.
+            </Typography>
           </Stack>
         )}
 
