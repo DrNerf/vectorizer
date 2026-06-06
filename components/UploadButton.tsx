@@ -6,6 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { styled } from "@mui/material/styles";
 import type { SourceImage } from "@/lib/types";
+import { decodeImageFile } from "@/lib/loadImage";
 
 // MUI's documented pattern for a file input behind a Button: a visually
 // hidden native <input> rendered as the button's child label.
@@ -37,13 +38,7 @@ export default function UploadButton({ onLoaded, onError }: UploadButtonProps) {
 
     setBusy(true);
     try {
-      const bitmap = await createImageBitmap(file);
-      onLoaded({
-        bitmap,
-        width: bitmap.width,
-        height: bitmap.height,
-        name: file.name,
-      });
+      onLoaded(await decodeImageFile(file));
     } catch (err) {
       onError?.(
         err instanceof Error ? err.message : "Could not decode that image.",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,6 +16,8 @@ import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import DownloadIcon from "@mui/icons-material/Download";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import Logo from "@/components/Logo";
 import UploadButton from "@/components/UploadButton";
 import ControlsPanel from "@/components/ControlsPanel";
 import CompareStage from "@/components/CompareStage";
@@ -24,6 +26,7 @@ import PresetMenu from "@/components/PresetMenu";
 import { useVectorizer } from "@/lib/useVectorizer";
 import { downloadSvg, downloadLayersZip, svgFilename } from "@/lib/download";
 import { DEFAULT_PARAMS, type SourceImage, type VectorizeParams } from "@/lib/types";
+import { decodeImageFile, firstImageFile } from "@/lib/loadImage";
 import type { Preset } from "@/lib/presets";
 
 const DRAWER_WIDTH = 320;
@@ -34,6 +37,9 @@ export default function Home() {
   const [params, setParams] = useState<VectorizeParams>(DEFAULT_PARAMS);
   const [error, setError] = useState<string | null>(null);
   const [dlAnchor, setDlAnchor] = useState<null | HTMLElement>(null);
+  const [dragOver, setDragOver] = useState(false);
+  // Nesting counter so child enter/leave events don't flicker the overlay.
+  const dragDepth = useRef(0);
   const { run, result, status, progress, error: vecError } = useVectorizer();
 
   // Debounced live recompute on any image or param change (plan §6).
@@ -51,6 +57,50 @@ export default function Home() {
   const applyPreset = useCallback(
     (preset: Preset) => setParams((p) => ({ ...p, ...preset.params })),
     [],
+  );
+
+  const loadFile = useCallback(async (file: File) => {
+    try {
+      setImage(await decodeImageFile(file));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not decode that image.");
+    }
+  }, []);
+
+  const hasFiles = (e: React.DragEvent) => Array.from(e.dataTransfer.types).includes("Files");
+
+  const onDragEnter = useCallback((e: React.DragEvent) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    dragDepth.current += 1;
+    setDragOver(true);
+  }, []);
+
+  const onDragOver = useCallback((e: React.DragEvent) => {
+    if (!hasFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  }, []);
+
+  const onDragLeave = useCallback((e: React.DragEvent) => {
+    if (!hasFiles(e)) return;
+    dragDepth.current -= 1;
+    if (dragDepth.current <= 0) {
+      dragDepth.current = 0;
+      setDragOver(false);
+    }
+  }, []);
+
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      dragDepth.current = 0;
+      setDragOver(false);
+      const file = firstImageFile(e.dataTransfer);
+      if (file) void loadFile(file);
+    },
+    [loadFile],
   );
 
   const handleDownload = useCallback(() => {
@@ -73,9 +123,12 @@ export default function Home() {
         sx={{ zIndex: (t) => t.zIndex.drawer + 1 }}
       >
         <Toolbar variant="dense" sx={{ gap: 2 }}>
-          <Typography variant="h6" noWrap sx={{ fontWeight: 600 }}>
-            Vectorizer
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Logo size={28} />
+            <Typography variant="h6" noWrap sx={{ fontWeight: 600 }}>
+              Vectorizer
+            </Typography>
+          </Box>
           {image && (
             <Chip
               size="small"
@@ -127,7 +180,14 @@ export default function Home() {
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
+      <Box
+        component="main"
+        onDragEnter={onDragEnter}
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+        sx={{ position: "relative", flexGrow: 1, display: "flex", flexDirection: "column" }}
+      >
         <Toolbar variant="dense" />
         {result && (
           <>
@@ -148,6 +208,35 @@ export default function Home() {
             progressPct={progress?.pct}
           />
         </Box>
+
+        {dragOver && (
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              zIndex: (t) => t.zIndex.drawer + 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              color: "primary.contrastText",
+              bgcolor: "rgba(25, 118, 210, 0.18)",
+              backdropFilter: "blur(2px)",
+              border: (t) => `3px dashed ${t.palette.primary.main}`,
+              borderRadius: 1,
+              pointerEvents: "none",
+            }}
+          >
+            <FileUploadIcon sx={{ fontSize: 56, color: "primary.main" }} />
+            <Typography variant="h6" sx={{ color: "text.primary" }}>
+              Drop image to upload
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              PNG or JPG
+            </Typography>
+          </Box>
+        )}
       </Box>
 
       <Snackbar

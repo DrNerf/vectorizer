@@ -273,7 +273,7 @@ export default function CompareStage({
           <Stack spacing={1} sx={{ height: "100%", alignItems: "center", justifyContent: "center", color: "text.secondary" }}>
             <ImageIcon sx={{ fontSize: 48, opacity: 0.5 }} />
             <Typography variant="body1">No image yet</Typography>
-            <Typography variant="body2" sx={{ opacity: 0.7 }}>Upload a PNG or JPG to begin.</Typography>
+            <Typography variant="body2" sx={{ opacity: 0.7 }}>Drag &amp; drop, or use Upload — PNG or JPG.</Typography>
           </Stack>
         )}
 
